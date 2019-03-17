@@ -47,7 +47,7 @@ class BaseCollection(Iterable):
         :rtype: ``resource_class``
         """
         resource_json = self.client.get(relative_id).successful().json()
-        return resource_class.from_json(
+        return self.client._get_class(resource_class).from_json(
             self.client, resource_json, api_path=relative_id
         )
 
@@ -65,7 +65,9 @@ class BaseCollection(Iterable):
         """
         resources = self.client.get(self.api_path).successful().json()
         for resource_json in resources:
-            yield resource_class.from_json(self.client, resource_json)
+            yield self.client._get_class(resource_class).from_json(
+                self.client, resource_json
+            )
 
     def __iter__(self):
         return self.stream()
@@ -89,7 +91,7 @@ class BaseCollection(Iterable):
         params = {"filter": "externalId==" + external_id}
         resources = self.client.get(self.api_path, params=params).successful().json()
         items = [
-            resource_class.from_json(self.client, resource_json)
+            self.client._get_class(resource_class).from_json(self.client, resource_json)
             for resource_json in resources
         ]
 

@@ -44,7 +44,9 @@ class Project(BaseResource):
         """
         alias = self.api_path + "/unifiedDataset"
         resource_json = self.client.get(alias).successful().json()
-        return Dataset.from_json(self.client, resource_json, alias)
+        return self.client._get_class(Dataset).from_json(
+            self.client, resource_json, alias
+        )
 
     def as_categorization(self):
         """Convert this project to a :class:`~tamr_unify_client.models.project.categorization.CategorizationProject`
@@ -61,7 +63,9 @@ class Project(BaseResource):
             raise TypeError(
                 f"Cannot convert project to categorization project. Project type: {self.type}"
             )
-        return CategorizationProject(self.client, self._data, self.api_path)
+        return self.client._get_class(CategorizationProject)(
+            self.client, self._data, self.api_path
+        )
 
     def as_mastering(self):
         """Convert this project to a :class:`~tamr_unify_client.models.project.mastering.MasteringProject`
@@ -76,4 +80,6 @@ class Project(BaseResource):
             raise TypeError(
                 f"Cannot convert project to mastering project. Project type: {self.type}"
             )
-        return MasteringProject(self.client, self._data, self.api_path)
+        return self.client._get_class(MasteringProject)(
+            self.client, self._data, self.api_path
+        )

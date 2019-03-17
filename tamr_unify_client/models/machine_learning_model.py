@@ -16,7 +16,7 @@ class MachineLearningModel(BaseResource):
             See :func:`~tamr_unify_client.models.operation.Operation.apply_options` .
         """
         op_json = self.client.post(self.api_path + ":refresh").successful().json()
-        op = Operation.from_json(self.client, op_json)
+        op = self.client._get_class(Operation).from_json(self.client, op_json)
         return op.apply_options(**options)
 
     def predict(self, **options):
@@ -27,5 +27,5 @@ class MachineLearningModel(BaseResource):
         """
         dependent_dataset = "/".join(self.api_path.split("/")[:-1])
         op_json = self.client.post(dependent_dataset + ":refresh").successful().json()
-        op = Operation.from_json(self.client, op_json)
+        op = self.client._get_class(Operation).from_json(self.client, op_json)
         return op.apply_options(**options)

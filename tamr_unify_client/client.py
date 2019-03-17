@@ -40,6 +40,8 @@ class Client:
     :type base_path: str
     :param session: Session to use for API calls. Default: A new default `requests.Session()`.
     :type session: requests.Session
+    :param class_mapping: A mapping from built-in classes to replacement classes.
+    :type class_mapping: dict
 
     Usage:
         >>> import tamr_unify_client as api
@@ -57,6 +59,7 @@ class Client:
         port=9100,
         base_path="api/versioned/v1/",
         session=None,
+        class_mapping=None,
     ):
         self.auth = auth
         self.host = host
@@ -64,9 +67,10 @@ class Client:
         self.port = port
         self.base_path = base_path
         self.session = session or requests.Session()
+        self._class_mapping = class_mapping or {}
 
-        self._projects = ProjectCollection(self)
-        self._datasets = DatasetCollection(self)
+        self._projects = self._get_class(ProjectCollection)(self)
+        self._datasets = self._get_class(DatasetCollection)(self)
 
         # logging
         self.logger = None
@@ -76,6 +80,10 @@ class Client:
             return f"{method} {url} : {response.status_code}"
 
         self.log_entry = None
+
+    def _get_class(self, clz):
+        """Fetch the class provided, or it's replacement if present. Package use only."""
+        return self._class_mapping.get(clz, clz)
 
     @property
     def origin(self):

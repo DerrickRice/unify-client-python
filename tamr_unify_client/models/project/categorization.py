@@ -13,4 +13,4 @@ class CategorizationProject(Project):
         :rtype: :class:`~tamr_unify_client.models.machine_learning_model.MachineLearningModel`
         """
         alias = self.api_path + "/categorizations/model"
-        return MachineLearningModel(self.client, None, alias)
+        return self.client._get_class(MachineLearningModel)(self.client, None, alias)

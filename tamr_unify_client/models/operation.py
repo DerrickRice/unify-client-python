@@ -91,7 +91,7 @@ class Operation(BaseResource):
         :rtype: :class:`~tamr_unify_client.models.Operation`
         """
         op_json = self.client.get(self.api_path).successful().json()
-        return Operation.from_json(self.client, op_json)
+        return self.from_json(self.client, op_json)
 
     def wait(self, poll_interval_seconds=3, timeout_seconds=None):
         """Continuously polls for this operation's server-side state.
